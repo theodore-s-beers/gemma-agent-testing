@@ -25,10 +25,12 @@ def main():
 
     client = genai.Client(api_key=api_key)
     messages = [
-        types.Content(
-            role="user",
-            parts=[types.Part(text=f"{new_system_prompt}\n\n{args.user_prompt}")],
-        )
+        genai.types.Content(
+            role="user", parts=[genai.types.Part(text=new_system_prompt)]
+        ),
+        genai.types.Content(
+            role="user", parts=[genai.types.Part(text=args.user_prompt)]
+        ),
     ]
     if args.verbose:
         print(f"User prompt: {args.user_prompt}\n")
