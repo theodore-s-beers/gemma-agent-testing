@@ -2,7 +2,7 @@ import ast
 import re
 from typing import Any, TypedDict
 
-from google.genai import types as genai_types
+from google import genai
 
 
 class ParsedFunctionCall(TypedDict):
@@ -18,7 +18,7 @@ class ParsedResponse(TypedDict):
 
 
 def process_model_response(
-    response: str, function_schemas: list[genai_types.FunctionDeclaration]
+    response: str, function_schemas: list[genai.types.FunctionDeclaration]
 ) -> ParsedResponse:
     if not contains_function_call(response):
         return {"type": "text", "content": response, "valid": True, "errors": []}
@@ -205,7 +205,7 @@ def parse_value(value_str: str) -> Any:
 
 
 def validate_function_call(
-    call: ParsedFunctionCall, function_schemas: list[genai_types.FunctionDeclaration]
+    call: ParsedFunctionCall, function_schemas: list[genai.types.FunctionDeclaration]
 ) -> tuple[bool, str]:
     """
     Returns (is_valid, error_message)
@@ -249,15 +249,15 @@ def validate_function_call(
     return True, ""
 
 
-def validate_type(value: Any, expected_type: genai_types.Type) -> bool:
+def validate_type(value: Any, expected_type: genai.types.Type) -> bool:
     type_map = {
-        genai_types.Type.TYPE_UNSPECIFIED: object,
-        genai_types.Type.STRING: str,
-        genai_types.Type.NUMBER: (int, float),
-        genai_types.Type.INTEGER: int,
-        genai_types.Type.BOOLEAN: bool,
-        genai_types.Type.ARRAY: list,
-        genai_types.Type.OBJECT: dict,
+        genai.types.Type.TYPE_UNSPECIFIED: object,
+        genai.types.Type.STRING: str,
+        genai.types.Type.NUMBER: (int, float),
+        genai.types.Type.INTEGER: int,
+        genai.types.Type.BOOLEAN: bool,
+        genai.types.Type.ARRAY: list,
+        genai.types.Type.OBJECT: dict,
     }
 
     expected_python_type = type_map.get(expected_type)

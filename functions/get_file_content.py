@@ -1,6 +1,6 @@
 import os
 
-from google.genai import types
+from google import genai
 
 from config import MAX_CHARS
 
@@ -24,14 +24,14 @@ def get_file_content(working_directory, file_path):
         return f'Error reading file "{file_path}": {e}'
 
 
-schema_get_file_content = types.FunctionDeclaration(
+schema_get_file_content = genai.types.FunctionDeclaration(
     name="get_file_content",
     description=f"Reads and returns the first {MAX_CHARS} characters of the content from a specified file within the working directory.",
-    parameters=types.Schema(
-        type=types.Type.OBJECT,
+    parameters=genai.types.Schema(
+        type=genai.types.Type.OBJECT,
         properties={
-            "file_path": types.Schema(
-                type=types.Type.STRING,
+            "file_path": genai.types.Schema(
+                type=genai.types.Type.STRING,
                 description="The path to the file whose content should be read, relative to the working directory.",
             ),
         },

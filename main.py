@@ -4,7 +4,6 @@ import sys
 
 from dotenv import load_dotenv
 from google import genai
-from google.genai import types
 
 from call_function import call_function
 from config import MAX_ITERS
@@ -67,7 +66,9 @@ def generate_content(client: genai.Client, messages, verbose):
         print(f"\nModel response:\n{response_text}\n")
 
     # Add model's response to messages
-    messages.append(types.Content(role="model", parts=[types.Part(text=response_text)]))
+    messages.append(
+        genai.types.Content(role="model", parts=[genai.types.Part(text=response_text)])
+    )
 
     parsed_response = process_model_response(response_text, available_functions)
     if verbose:
@@ -87,7 +88,9 @@ def generate_content(client: genai.Client, messages, verbose):
             print(f"Sending error feedback to model:\n{error_message}\n")
 
         messages.append(
-            types.Content(role="user", parts=[types.Part(text=error_message)])
+            genai.types.Content(
+                role="user", parts=[genai.types.Part(text=error_message)]
+            )
         )
         return None  # Continue loop
 
@@ -101,7 +104,9 @@ def generate_content(client: genai.Client, messages, verbose):
             print(f"Sending validation errors to model:\n{error_message}\n")
 
         messages.append(
-            types.Content(role="user", parts=[types.Part(text=error_message)])
+            genai.types.Content(
+                role="user", parts=[genai.types.Part(text=error_message)]
+            )
         )
         return None  # Continue loop
 
@@ -133,7 +138,9 @@ def generate_content(client: genai.Client, messages, verbose):
     if verbose:
         print(f"Sending function results back to model:\n{results_text}\n")
 
-    messages.append(types.Content(role="user", parts=[types.Part(text=results_text)]))
+    messages.append(
+        genai.types.Content(role="user", parts=[genai.types.Part(text=results_text)])
+    )
     return None  # Continue loop
 
 

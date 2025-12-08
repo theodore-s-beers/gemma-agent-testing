@@ -1,7 +1,7 @@
 import os
 import subprocess
 
-from google.genai import types
+from google import genai
 
 
 def run_python_file(working_directory, file_path, args=None):
@@ -38,20 +38,20 @@ def run_python_file(working_directory, file_path, args=None):
         return f"Error: executing Python file: {e}"
 
 
-schema_run_python_file = types.FunctionDeclaration(
+schema_run_python_file = genai.types.FunctionDeclaration(
     name="run_python_file",
     description="Executes a Python file within the working directory and returns the output from the interpreter.",
-    parameters=types.Schema(
-        type=types.Type.OBJECT,
+    parameters=genai.types.Schema(
+        type=genai.types.Type.OBJECT,
         properties={
-            "file_path": types.Schema(
-                type=types.Type.STRING,
+            "file_path": genai.types.Schema(
+                type=genai.types.Type.STRING,
                 description="Path to the Python file to execute, relative to the working directory.",
             ),
-            "args": types.Schema(
-                type=types.Type.ARRAY,
-                items=types.Schema(
-                    type=types.Type.STRING,
+            "args": genai.types.Schema(
+                type=genai.types.Type.ARRAY,
+                items=genai.types.Schema(
+                    type=genai.types.Type.STRING,
                     description="Optional arguments to pass to the Python file.",
                 ),
                 description="Optional arguments to pass to the Python file.",

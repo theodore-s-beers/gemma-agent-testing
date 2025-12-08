@@ -1,16 +1,16 @@
-from google.genai import types as genai_types
+from google import genai
 
 from parse_response import process_model_response
 
 
 def test_simple_function_call():
-    schemas: list[genai_types.FunctionDeclaration] = [
-        genai_types.FunctionDeclaration(
+    schemas: list[genai.types.FunctionDeclaration] = [
+        genai.types.FunctionDeclaration(
             name="get_weather",
             description="Get weather",
-            parameters=genai_types.Schema(
-                type=genai_types.Type.OBJECT,
-                properties={"city": genai_types.Schema(type=genai_types.Type.STRING)},
+            parameters=genai.types.Schema(
+                type=genai.types.Type.OBJECT,
+                properties={"city": genai.types.Schema(type=genai.types.Type.STRING)},
                 required=["city"],
             ),
         )
@@ -27,22 +27,22 @@ def test_simple_function_call():
 
 
 def test_multiple_function_calls():
-    schemas: list[genai_types.FunctionDeclaration] = [
-        genai_types.FunctionDeclaration(
+    schemas: list[genai.types.FunctionDeclaration] = [
+        genai.types.FunctionDeclaration(
             name="func1",
             description="Function 1",
-            parameters=genai_types.Schema(
-                type=genai_types.Type.OBJECT,
-                properties={"a": genai_types.Schema(type=genai_types.Type.INTEGER)},
+            parameters=genai.types.Schema(
+                type=genai.types.Type.OBJECT,
+                properties={"a": genai.types.Schema(type=genai.types.Type.INTEGER)},
                 required=["a"],
             ),
         ),
-        genai_types.FunctionDeclaration(
+        genai.types.FunctionDeclaration(
             name="func2",
             description="Function 2",
-            parameters=genai_types.Schema(
-                type=genai_types.Type.OBJECT,
-                properties={"b": genai_types.Schema(type=genai_types.Type.STRING)},
+            parameters=genai.types.Schema(
+                type=genai.types.Type.OBJECT,
+                properties={"b": genai.types.Schema(type=genai.types.Type.STRING)},
                 required=["b"],
             ),
         ),
@@ -59,13 +59,13 @@ def test_multiple_function_calls():
 
 
 def test_string_with_comma():
-    schemas: list[genai_types.FunctionDeclaration] = [
-        genai_types.FunctionDeclaration(
+    schemas: list[genai.types.FunctionDeclaration] = [
+        genai.types.FunctionDeclaration(
             name="send_message",
             description="Send a message",
-            parameters=genai_types.Schema(
-                type=genai_types.Type.OBJECT,
-                properties={"text": genai_types.Schema(type=genai_types.Type.STRING)},
+            parameters=genai.types.Schema(
+                type=genai.types.Type.OBJECT,
+                properties={"text": genai.types.Schema(type=genai.types.Type.STRING)},
                 required=["text"],
             ),
         )
@@ -80,13 +80,13 @@ def test_string_with_comma():
 
 
 def test_escaped_quotes():
-    schemas: list[genai_types.FunctionDeclaration] = [
-        genai_types.FunctionDeclaration(
+    schemas: list[genai.types.FunctionDeclaration] = [
+        genai.types.FunctionDeclaration(
             name="echo",
             description="Echo text",
-            parameters=genai_types.Schema(
-                type=genai_types.Type.OBJECT,
-                properties={"text": genai_types.Schema(type=genai_types.Type.STRING)},
+            parameters=genai.types.Schema(
+                type=genai.types.Type.OBJECT,
+                properties={"text": genai.types.Schema(type=genai.types.Type.STRING)},
                 required=["text"],
             ),
         )
@@ -101,13 +101,13 @@ def test_escaped_quotes():
 
 
 def test_list_parameter():
-    schemas: list[genai_types.FunctionDeclaration] = [
-        genai_types.FunctionDeclaration(
+    schemas: list[genai.types.FunctionDeclaration] = [
+        genai.types.FunctionDeclaration(
             name="sum_numbers",
             description="Sum numbers",
-            parameters=genai_types.Schema(
-                type=genai_types.Type.OBJECT,
-                properties={"numbers": genai_types.Schema(type=genai_types.Type.ARRAY)},
+            parameters=genai.types.Schema(
+                type=genai.types.Type.OBJECT,
+                properties={"numbers": genai.types.Schema(type=genai.types.Type.ARRAY)},
                 required=["numbers"],
             ),
         )
@@ -122,13 +122,13 @@ def test_list_parameter():
 
 
 def test_dict_parameter():
-    schemas: list[genai_types.FunctionDeclaration] = [
-        genai_types.FunctionDeclaration(
+    schemas: list[genai.types.FunctionDeclaration] = [
+        genai.types.FunctionDeclaration(
             name="create_user",
             description="Create user",
-            parameters=genai_types.Schema(
-                type=genai_types.Type.OBJECT,
-                properties={"data": genai_types.Schema(type=genai_types.Type.OBJECT)},
+            parameters=genai.types.Schema(
+                type=genai.types.Type.OBJECT,
+                properties={"data": genai.types.Schema(type=genai.types.Type.OBJECT)},
                 required=["data"],
             ),
         )
@@ -153,15 +153,15 @@ def test_text_response():
 
 
 def test_missing_required_parameter():
-    schemas: list[genai_types.FunctionDeclaration] = [
-        genai_types.FunctionDeclaration(
+    schemas: list[genai.types.FunctionDeclaration] = [
+        genai.types.FunctionDeclaration(
             name="get_weather",
             description="Get weather",
-            parameters=genai_types.Schema(
-                type=genai_types.Type.OBJECT,
+            parameters=genai.types.Schema(
+                type=genai.types.Type.OBJECT,
                 properties={
-                    "city": genai_types.Schema(type=genai_types.Type.STRING),
-                    "units": genai_types.Schema(type=genai_types.Type.STRING),
+                    "city": genai.types.Schema(type=genai.types.Type.STRING),
+                    "units": genai.types.Schema(type=genai.types.Type.STRING),
                 },
                 required=["city"],
             ),
@@ -178,13 +178,13 @@ def test_missing_required_parameter():
 
 
 def test_wrong_parameter_type():
-    schemas: list[genai_types.FunctionDeclaration] = [
-        genai_types.FunctionDeclaration(
+    schemas: list[genai.types.FunctionDeclaration] = [
+        genai.types.FunctionDeclaration(
             name="set_volume",
             description="Set volume",
-            parameters=genai_types.Schema(
-                type=genai_types.Type.OBJECT,
-                properties={"level": genai_types.Schema(type=genai_types.Type.INTEGER)},
+            parameters=genai.types.Schema(
+                type=genai.types.Type.OBJECT,
+                properties={"level": genai.types.Schema(type=genai.types.Type.INTEGER)},
                 required=["level"],
             ),
         )
@@ -199,12 +199,12 @@ def test_wrong_parameter_type():
 
 
 def test_unknown_function():
-    schemas: list[genai_types.FunctionDeclaration] = [
-        genai_types.FunctionDeclaration(
+    schemas: list[genai.types.FunctionDeclaration] = [
+        genai.types.FunctionDeclaration(
             name="known_func",
             description="Known",
-            parameters=genai_types.Schema(
-                type=genai_types.Type.OBJECT,
+            parameters=genai.types.Schema(
+                type=genai.types.Type.OBJECT,
                 properties={},
                 required=[],
             ),
@@ -239,13 +239,13 @@ def test_empty_brackets():
 
 
 def test_whitespace_handling():
-    schemas: list[genai_types.FunctionDeclaration] = [
-        genai_types.FunctionDeclaration(
+    schemas: list[genai.types.FunctionDeclaration] = [
+        genai.types.FunctionDeclaration(
             name="test_func",
             description="Test",
-            parameters=genai_types.Schema(
-                type=genai_types.Type.OBJECT,
-                properties={"param": genai_types.Schema(type=genai_types.Type.STRING)},
+            parameters=genai.types.Schema(
+                type=genai.types.Type.OBJECT,
+                properties={"param": genai.types.Schema(type=genai.types.Type.STRING)},
                 required=["param"],
             ),
         )
