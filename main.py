@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+from time import sleep
 from typing import Any, Optional
 
 from dotenv import load_dotenv
@@ -33,13 +34,15 @@ def main() -> None:
     if args.verbose:
         print(f"User prompt: {args.user_prompt}\n")
 
-    for _ in range(MAX_ITERS):
+    for i in range(MAX_ITERS):
+        print(f"--- Iteration {i + 1} ---")
         try:
             final_response = generate_content(client, messages, args.verbose)
             if final_response is not None:
                 print("Final response:")
                 print(final_response)
                 return
+            sleep(5 + i * 2)
         except Exception as e:
             print(f"Error in generate_content: {e}", file=sys.stderr)
             sys.exit(1)

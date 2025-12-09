@@ -46,7 +46,7 @@ def process_model_response(
 
                 parsed_calls.append(call)
             except Exception as e:
-                errors.append(f"Parse error for '{call_str}': {str(e)}")
+                errors.append(f"""Parse error for '{call_str}': {str(e)}""")
 
         return {
             "type": "function_call",

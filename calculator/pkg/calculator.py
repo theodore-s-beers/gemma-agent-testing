@@ -7,7 +7,7 @@ class Calculator:
             "/": lambda a, b: a / b,
         }
         self.precedence = {
-            "+": 1,
+            "+": 3,
             "-": 1,
             "*": 2,
             "/": 2,
@@ -24,6 +24,7 @@ class Calculator:
         operators = []
 
         for token in tokens:
+            print(f"Token: {token}, Values: {values}, Operators: {operators}")
             if token in self.operators:
                 while (
                     operators

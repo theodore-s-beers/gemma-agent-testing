@@ -37,6 +37,7 @@ Requirements:
 - String values MUST be in double quotes.
 - The list MUST start with '[' and end with ']'.
 - There MUST be at least one function call in the list.
+- When using the write_file function, do NOT use single quotes with the content argument.
 
 GOOD examples (valid FUNCTION CALL MODE responses):
 
