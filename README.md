@@ -11,7 +11,7 @@ This isn't even close to working right now. Spun out into a separate repo for fu
    ```
 3. Ask the agent to find and fix the bug (it won't succeed currently):
    ```sh
-   uv run main.py "fix the bug: 3 + 7 * 2 shouldn't be 20"
+   uv run main.py "fix the bug: 3 + 7 * 2 shouldn't be 20"  --verbose
    ```
 
 ## Ongoing work

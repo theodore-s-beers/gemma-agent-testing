@@ -1,6 +1,7 @@
 import argparse
 import os
 import sys
+from time import sleep
 from typing import Any, Optional
 
 from dotenv import load_dotenv
@@ -33,13 +34,15 @@ def main() -> None:
     if args.verbose:
         print(f"User prompt: {args.user_prompt}\n")
 
-    for _ in range(MAX_ITERS):
+    for i in range(MAX_ITERS):
+        print(f"--- Iteration {i + 1} ---")
         try:
             final_response = generate_content(client, messages, args.verbose)
             if final_response is not None:
                 print("Final response:")
                 print(final_response)
                 return
+            sleep(5 + i * 2)
         except Exception as e:
             print(f"Error in generate_content: {e}", file=sys.stderr)
             sys.exit(1)
@@ -101,7 +104,9 @@ def generate_content(
     if not parsed_response["valid"]:
         error_message = "Function call validation failed:\n"
         error_message += "\n".join(f"- {err}" for err in parsed_response["errors"])
-        error_message += "\n\nPlease correct the function calls."
+        error_message += "\n\nPlease fix the function call syntax."
+        error_message += "\nThey were likely malformed, check the FUNCTION CALL MODE "
+        error_message += "instructions from the first message and try again."
 
         if verbose:
             print(f"Sending validation errors to model:\n{error_message}\n")
