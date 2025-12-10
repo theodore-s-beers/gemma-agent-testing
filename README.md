@@ -15,16 +15,19 @@ To try to overcome these obstacles, I've made a number of changes to the origina
 
 With help from a Boot.dev community member (thanks ML Zebra!), I also changed the prompting strategy, so that a highly verbose and detailed "system prompt" is sent to the model as the first message in each conversation. We basically explain to the model as clearly as possible how to plan its work on the given problem; how to request function calls; what functions are available to it; etc. Much of the system prompt is concerned with impressing upon the model the importance of keeping function call requests in the correct form. Such is the infuriating dance of prompt engineering. (See [`prompts.py`](prompts.py).)
 
+We also added the option to use a local LLM via LM Studio. This was possible due to the above changes which imply that we essentially only need a 'regular' LLM for this code to work, not one that can handle tools. This feature is more experimental since the prompt (see above) may need to be tweaked for each model. The main implementation is in [`local_genai.py`](lib/local_genai.py). Alternatively, the repo could also be changed over to use the OpenAI API (since Google supports it, though recommends their own).
+
 **Anyway, does it work?** The answer is... kind of! If you're taking the Boot.dev AI agent course and setting up a paid account with Google is not an option for you, then you can try to use Gemma 3 27B with the strategies followed in this repo. I hope it will be helpful to someone.
 
 ## Steps to try
 
+1. Create a copy of `.env.example` named `.env` and paste in your API key and/or set `USE_LOCAL_LLM` to `true` to use your local LM Studio server.
 1. Create a bug in `calculator/pkg/calculator.py` by changing the precedence of the `+` operator to `3`.
-2. Verify that it's broken. This should now return `20` instead of the correct `17`:
+1. Verify that it's broken. This should now return `20` instead of the correct `17`:
    ```sh
    uv run calculator/main.py '3 + 7 * 2'
    ```
-3. Ask the agent to find and fix the bug (it may or may not succeed in any given run):
+1. Ask the agent to find and fix the bug (it may or may not succeed in any given run):
    ```sh
    uv run main.py "fix the bug: 3 + 7 * 2 shouldn't be 20" --verbose
    ```
@@ -38,3 +41,5 @@ Most of what I added or changed is in the following modules:
 - [`parse_response.py`](parse_response.py): entirely new module to parse LLM responses, detect function calls, etc.
 - [`prompts.py`](prompts.py): new, _much_ more verbose system prompt
 - [`test_parse_response.py`](test_parse_response.py): tests for the new response parser
+- [`local_genai.py`](lib/local_genai.py): implementation of a local class that mimics Google's `genai` behavior
+- [`llm_config.py`](llm_config.py): selects whether to use Google's `genai` or the local class
