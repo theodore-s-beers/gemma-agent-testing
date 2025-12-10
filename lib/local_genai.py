@@ -13,7 +13,7 @@ class LocalGenAIClient:
             base_url: LM Studio server URL (default: http://localhost:1234/v1)
         """
         if base_url is None:
-            base_url = os.getenv("LM_STUDIO_URL", "http://localhost:1234/v1")
+            base_url = os.getenv("LMSTUDIO_URL", "http://localhost:1234/v1")
 
         self._client = OpenAI(base_url=base_url, api_key="lm-studio")
         self.models = self.ModelsAPI(self._client)

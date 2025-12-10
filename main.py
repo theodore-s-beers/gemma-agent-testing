@@ -5,7 +5,7 @@ from time import sleep
 from typing import Any, Optional
 
 from dotenv import load_dotenv
-from llm_config import genai, USE_LOCAL, USE_OPENROUTER
+from llm_config import genai, LLM_PROVIDER
 
 from call_function import call_function
 from config import MAX_ITERS
@@ -20,14 +20,16 @@ def main() -> None:
     args = parser.parse_args()
 
     load_dotenv()
-    if USE_OPENROUTER:
+    if LLM_PROVIDER == "openrouter":
         api_key = os.environ.get("OPENROUTER_API_KEY")
         if not api_key:
             raise RuntimeError("OPENROUTER_API_KEY environment variable not set")
-    if not USE_LOCAL and not USE_OPENROUTER:
+    elif LLM_PROVIDER == "google":
         api_key = os.environ.get("GEMINI_API_KEY")
         if not api_key:
             raise RuntimeError("GEMINI_API_KEY environment variable not set")
+    else:
+        api_key = None  # LM Studio and llama.cpp do not require API keys
 
     client = genai.Client(api_key=api_key)
     messages = [
@@ -52,7 +54,7 @@ def main() -> None:
 
             # Add delay between iterations to try to avoid rate limits
             # Delay increases by 2 seconds each iteration
-            if not USE_LOCAL:
+            if LLM_PROVIDER in ("google", "openrouter"):
                 sleep(5 + i * 2)
         except Exception as e:
             print(f"Error in generate_content: {e}", file=sys.stderr)
