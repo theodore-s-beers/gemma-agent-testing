@@ -2,27 +2,34 @@ from openai import OpenAI
 import os
 
 
-class LocalGenAIClient:
-    """Drop-in replacement for google.genai.Client using LM Studio."""
+class OpenRouterGenAIClient:
+    """Drop-in replacement for google.genai.Client using OpenRouter."""
 
-    def __init__(self, api_key: str | None = None, base_url: str | None = None):
+    def __init__(self, api_key: str | None = None):
         """Initialize client.
-
+        
         Args:
-            api_key: Not used, kept for compatibility with genai.Client
-            base_url: LM Studio server URL (default: http://localhost:1234/v1)
+            api_key: OpenRouter API key
         """
-        if base_url is None:
-            base_url = os.getenv("LM_STUDIO_URL", "http://localhost:1234/v1")
+        if api_key is None:
+            api_key = os.getenv("OPENROUTER_API_KEY")
+        
+        if not api_key:
+            raise ValueError("OpenRouter API key is required")
 
-        self._client = OpenAI(base_url=base_url, api_key="lm-studio")
-        self.models = self.ModelsAPI(self._client)
+        self._client = OpenAI(
+            base_url="https://openrouter.ai/api/v1",
+            api_key=api_key,
+        )
+        self._default_model = os.getenv("OPENROUTER_MODEL", "google/gemma-3-27b-it:free")
+        self.models = self.ModelsAPI(self._client, self._default_model)
 
     class ModelsAPI:
         """Mimics the genai.Client().models interface"""
 
-        def __init__(self, client: OpenAI):
+        def __init__(self, client: OpenAI, default_model: str):
             self._client = client
+            self._default_model = default_model
 
         def generate_content(
             self,
@@ -31,11 +38,11 @@ class LocalGenAIClient:
             temperature: float = 0.7,
             max_tokens: int | None = None,
             **kwargs,
-        ) -> "LocalGenAIClient.Response":
+        ) -> "OpenRouterGenAIClient.Response":
             """Generate content matching genai interface.
 
             Args:
-                model: Model name (ignored by LM Studio, but kept for compatibility).
+                model: Model name (can use OpenRouter model names or pass through).
                 contents: Prompt string or structured contents.
                 temperature: Sampling temperature.
                 max_tokens: Maximum tokens to generate (None = use model's default)
@@ -46,18 +53,21 @@ class LocalGenAIClient:
             """
             messages = self._convert_contents_to_messages(contents)
 
+            actual_model = self._default_model
+            
             params = {
-                "model": "local-model",
+                "model": actual_model,
                 "messages": messages,
                 "temperature": temperature,
             }
+
             if max_tokens is not None:
                 params["max_tokens"] = max_tokens
             params.update(kwargs)
 
             response = self._client.chat.completions.create(**params)
 
-            return LocalGenAIClient.Response(response)
+            return OpenRouterGenAIClient.Response(response)
 
         def _convert_contents_to_messages(self, contents: any) -> list[dict[str, str]]:
             """Convert various content formats to OpenAI messages format."""
@@ -117,7 +127,9 @@ class LocalGenAIClient:
         def __init__(self, openai_response):
             self._response = openai_response
             self.text = openai_response.choices[0].message.content
-            self.usage_metadata = LocalGenAIClient.UsageMetadata(openai_response.usage)
+            self.usage_metadata = OpenRouterGenAIClient.UsageMetadata(
+                openai_response.usage
+            )
 
         def __str__(self):
             return self.text or ""

@@ -5,7 +5,7 @@ from time import sleep
 from typing import Any, Optional
 
 from dotenv import load_dotenv
-from llm_config import genai, USE_LOCAL
+from llm_config import genai, USE_LOCAL, USE_OPENROUTER
 
 from call_function import call_function
 from config import MAX_ITERS
@@ -20,9 +20,14 @@ def main() -> None:
     args = parser.parse_args()
 
     load_dotenv()
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        raise RuntimeError("GEMINI_API_KEY environment variable not set")
+    if USE_OPENROUTER:
+        api_key = os.environ.get("OPENROUTER_API_KEY")
+        if not api_key:
+            raise RuntimeError("OPENROUTER_API_KEY environment variable not set")
+    if not USE_LOCAL and not USE_OPENROUTER:
+        api_key = os.environ.get("GEMINI_API_KEY")
+        if not api_key:
+            raise RuntimeError("GEMINI_API_KEY environment variable not set")
 
     client = genai.Client(api_key=api_key)
     messages = [
@@ -62,6 +67,7 @@ def generate_content(
     messages: list[genai.types.Content],
     verbose: bool,
 ) -> Optional[str]:
+    # model parameter will be ignored by OpenRouter and LocalGenAIClient
     response = client.models.generate_content(model="gemma-3-27b-it", contents=messages)
     if response.text is None or response.usage_metadata is None:
         raise RuntimeError("Gemini API response appears to be malformed")
