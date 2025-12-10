@@ -5,7 +5,7 @@ from time import sleep
 from typing import Any, Optional
 
 from dotenv import load_dotenv
-from llm_config import genai
+from llm_config import genai, USE_LOCAL
 
 from call_function import call_function
 from config import MAX_ITERS
@@ -47,7 +47,8 @@ def main() -> None:
 
             # Add delay between iterations to try to avoid rate limits
             # Delay increases by 2 seconds each iteration
-            sleep(5 + i * 2)
+            if not USE_LOCAL:
+                sleep(5 + i * 2)
         except Exception as e:
             print(f"Error in generate_content: {e}", file=sys.stderr)
             sys.exit(1)
