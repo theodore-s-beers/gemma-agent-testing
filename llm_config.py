@@ -101,5 +101,7 @@ else:
 
     genai: GenAIProtocol = GenAIShim()
 
+ClientType = Any  # TODO: Replace `Any` with the actual client class
+ContentType = Any  # TODO: Replace `Any` with the actual content class
 
 __all__ = ["genai", "LLM_PROVIDER"]

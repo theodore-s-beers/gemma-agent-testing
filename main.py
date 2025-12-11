@@ -5,7 +5,7 @@ from time import sleep
 from typing import Any, Optional
 
 from dotenv import load_dotenv
-from llm_config import genai, LLM_PROVIDER
+from llm_config import genai, ClientType, ContentType, LLM_PROVIDER
 
 from call_function import call_function
 from config import MAX_ITERS
@@ -29,7 +29,7 @@ def main() -> None:
         if not api_key:
             raise RuntimeError("GEMINI_API_KEY environment variable not set")
     else:
-        api_key = None  # LM Studio and llama.cpp do not require API keys
+        api_key = None  # local providers don't need an API key
 
     client = genai.Client(api_key=api_key)  # type: ignore[call-arg]
     messages = [
@@ -65,8 +65,8 @@ def main() -> None:
 
 
 def generate_content(
-    client: genai.Client,
-    messages: list[genai.types.Content],
+    client: ClientType,
+    messages: list[ContentType],
     verbose: bool,
 ) -> Optional[str]:
     # model parameter will be ignored by OpenRouter and LocalGenAIClient
