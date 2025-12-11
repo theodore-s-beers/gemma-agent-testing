@@ -5,7 +5,7 @@ from time import sleep
 from typing import Any, Optional
 
 from dotenv import load_dotenv
-from google import genai
+from llm_config import genai, ClientType, ContentType, LLM_PROVIDER
 
 from call_function import call_function
 from config import MAX_ITERS
@@ -20,9 +20,16 @@ def main() -> None:
     args = parser.parse_args()
 
     load_dotenv()
-    api_key = os.environ.get("GEMINI_API_KEY")
-    if not api_key:
-        raise RuntimeError("GEMINI_API_KEY environment variable not set")
+    if LLM_PROVIDER == "openrouter":
+        api_key = os.environ.get("OPENROUTER_API_KEY")
+        if not api_key:
+            raise RuntimeError("OPENROUTER_API_KEY environment variable not set")
+    elif LLM_PROVIDER == "google":
+        api_key = os.environ.get("GEMINI_API_KEY")
+        if not api_key:
+            raise RuntimeError("GEMINI_API_KEY environment variable not set")
+    else:
+        api_key = None  # local providers don't need an API key
 
     client = genai.Client(api_key=api_key)
     messages = [
@@ -47,7 +54,8 @@ def main() -> None:
 
             # Add delay between iterations to try to avoid rate limits
             # Delay increases by 2 seconds each iteration
-            sleep(5 + i * 2)
+            if LLM_PROVIDER in ("google", "openrouter"):
+                sleep(5 + i * 2)
         except Exception as e:
             print(f"Error in generate_content: {e}", file=sys.stderr)
             sys.exit(1)
@@ -57,10 +65,11 @@ def main() -> None:
 
 
 def generate_content(
-    client: genai.Client,
-    messages: list[genai.types.Content],
+    client: ClientType,
+    messages: list[ContentType],
     verbose: bool,
 ) -> Optional[str]:
+    # model parameter will be ignored by OpenRouter and LocalGenAIClient
     response = client.models.generate_content(model="gemma-3-27b-it", contents=messages)
     if response.text is None or response.usage_metadata is None:
         raise RuntimeError("Gemini API response appears to be malformed")
