@@ -4,8 +4,6 @@ import sys
 from time import sleep
 from typing import Any, Optional
 
-from dotenv import load_dotenv
-
 from call_function import call_function
 from config import MAX_ITERS
 from llm_config import LLM_PROVIDER, ClientType, ContentType, genai
@@ -19,15 +17,15 @@ def main() -> None:
     parser.add_argument("--verbose", action="store_true", help="Enable verbose output")
     args = parser.parse_args()
 
-    load_dotenv()
-    if LLM_PROVIDER == "openrouter":
-        api_key = os.environ.get("OPENROUTER_API_KEY")
+    api_key_env = {
+        "openrouter": "OPENROUTER_API_KEY",
+        "google": "GEMINI_API_KEY",
+    }
+    api_key_var = api_key_env.get(LLM_PROVIDER)
+    if api_key_var:
+        api_key = os.environ.get(api_key_var)
         if not api_key:
-            raise RuntimeError("OPENROUTER_API_KEY environment variable not set")
-    elif LLM_PROVIDER == "google":
-        api_key = os.environ.get("GEMINI_API_KEY")
-        if not api_key:
-            raise RuntimeError("GEMINI_API_KEY environment variable not set")
+            raise RuntimeError(f"{api_key_var} environment variable not set")
     else:
         api_key = None  # local providers don't need an API key
 
