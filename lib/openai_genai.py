@@ -59,7 +59,7 @@ class OpenAIGenAIClient:
 
             params.update(kwargs)
 
-            response = self._client.chat.completions.create(**params)
+            response = self._client.chat.completions.create(**params)  # type: ignore[no-matching-overload]
             return OpenAIGenAIClient.Response(response)
 
         def _convert_contents_to_messages(self, contents: Any) -> list[dict[str, str]]:

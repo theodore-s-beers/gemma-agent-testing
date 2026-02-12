@@ -114,24 +114,23 @@ if client_class is None:
 else:
     import google.genai as _google_genai
 
-    class GenAIShim:
+    class GenAIShim(GenAIProtocol):
         types: ClassVar[Any] = _google_genai.types
 
         @staticmethod
-        def Client(api_key=None):
+        def Client(api_key: str | None = None) -> LLMClient:
             if client_class == LocalGenAIClient:
                 return cast(
                     LLMClient, LocalGenAIClient(api_key=api_key, base_url=base_url)
                 )
-            elif client_class == OpenRouterGenAIClient:
+            if client_class == OpenRouterGenAIClient:
                 return cast(
                     LLMClient,
                     OpenRouterGenAIClient(
                         api_key=api_key or os.getenv("OPENROUTER_API_KEY")
                     ),
                 )
-            else:
-                raise RuntimeError("Unsupported client class")
+            raise RuntimeError("Unsupported client class")
 
     genai: GenAIProtocol = GenAIShim()
 
