@@ -9,7 +9,7 @@ dependencies = [
   "openai>=2.20.0",
   "pyright>=1.1.408",
   "pytest>=9.0.2",
-  "python-dotenv>=1.2.1",
+  "python-dotenv>=1.2.2",
   "ruff>=0.15.0",
   "ty>=0.0.16",
 ]
